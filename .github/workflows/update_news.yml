@@ -3,24 +3,25 @@ name: Update Google News RSS
 on:
   schedule:
     - cron: "0 */4 * * *"  # Runs every 4 hours
-  push:
-    branches:
-      - main
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   update-news:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Grants write access to commit changes
+
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Set Up Python
         uses: actions/setup-python@v3
         with:
-          python-version: "3.9"
+          python-version: '3.9'  # You can change this to a newer stable version
 
       - name: Install Dependencies
-        run: pip install feedparser
+        run: pip install feedparser  # Specify dependencies
 
       - name: Run RSS Fetch Script
         run: python fetch_news.py
