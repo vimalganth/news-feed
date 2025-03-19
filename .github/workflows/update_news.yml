@@ -1,0 +1,34 @@
+name: Update Google News RSS
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"  # Runs every 4 hours
+  push:
+    branches:
+      - main
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+
+      - name: Install Dependencies
+        run: pip install feedparser
+
+      - name: Run RSS Fetch Script
+        run: python fetch_news.py
+
+      - name: Commit & Push Updates
+        run: |
+          git config --global user.name "GitHub Bot"
+          git config --global user.email "bot@example.com"
+          git add news.md
+          git commit -m "🔄 Auto-update news feed"
+          git push
