@@ -9,27 +9,31 @@ jobs:
   update-news:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Grants write access to commit changes
+      contents: write  # Allows commit & push access
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set Up Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.9'  # You can change this to a newer stable version
+          python-version: '3.9'
 
       - name: Install Dependencies
-        run: pip install feedparser  # Specify dependencies
+        run: pip install feedparser  # Install dependencies
 
       - name: Run RSS Fetch Script
         run: python fetch_news.py
 
       - name: Commit & Push Updates
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add news.md
           git commit -m "📰 Auto-update news feed" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/vimalganth/news-feed.git HEAD:main
+          git push origin main  # Uses built-in GITHUB_TOKEN
