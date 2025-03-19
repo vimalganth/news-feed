@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           persist-credentials: false  # Prevents token issues
+          fetch-depth: 0  # Ensures full history for rebase
 
       - name: Set Up Python
         uses: actions/setup-python@v3
@@ -40,4 +41,5 @@ jobs:
           git add news.md
           git commit -m "📰 Auto-update news feed" || echo "No changes to commit"
 
-          git push https://github.com/vimalganth/news-feed.git HEAD:main
+          # Push changes safely
+          git push origin HEAD:main
