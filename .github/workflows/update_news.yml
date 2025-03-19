@@ -54,13 +54,13 @@ jobs:
           git fetch origin main
           git reset --hard origin/main  # Ensure a clean state
 
-          # Ensure news.md exists
+          # Check if news.md exists before committing
           if [ ! -f news.md ]; then
-            echo "❌ ERROR: news.md file not found, skipping commit."
-            exit 1
+            echo "❌ ERROR: news.md file not found! Creating a new one."
+            echo "# 📰 Latest News Updates" > news.md
           fi
 
-          # Check if news.md has changed
+          # Check if news.md has changes
           if git diff --quiet -- news.md; then
             echo "✅ No changes in news.md, skipping commit."
             exit 0
@@ -73,5 +73,5 @@ jobs:
           # Pull latest changes and handle merge conflicts
           git pull --rebase origin main || (echo "⚠️ Merge conflict detected, aborting rebase" && git rebase --abort)
 
-          # Push changes safely
+          # Force push to ensure changes are committed
           git push origin main --force-with-lease || echo "⚠️ Push failed. Check permissions or conflicts."
