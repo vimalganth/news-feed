@@ -1,4 +1,4 @@
-name: Update Google News RSS
+name: Google News RSS
 
 on:
   schedule:
@@ -46,4 +46,4 @@ jobs:
           git commit -m "📰 Auto-update news feed" || echo "No changes to commit"
 
           # Push changes safely
-          git push origin main --force
+          git pull --rebase origin main || git reset --hard origin/main
