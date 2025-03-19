@@ -3,7 +3,6 @@ import feedparser
 # List of multiple RSS feeds
 RSS_FEEDS = [
     "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en",
-    "https://rss.cnn.com/rss/edition.rss",
     "https://www.aljazeera.com/xml/rss/all.xml"
 ]
 
