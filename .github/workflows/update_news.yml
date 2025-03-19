@@ -29,10 +29,14 @@ jobs:
       - name: Run RSS Fetch Script
         run: python fetch_news.py
 
-      - name: Debug - Check if news.md exists
+      - name: Debug - Check if news.md exists & print contents
         run: |
-          if [ ! -f news.md ]; then
-            echo "⚠️ news.md file is missing! The script may have failed."
+          if [ -f news.md ]; then
+            echo "✅ news.md exists."
+            echo "🔍 Contents of news.md:"
+            cat news.md
+          else
+            echo "❌ ERROR: news.md file is missing! The script may have failed."
             exit 1
           fi
 
@@ -50,13 +54,13 @@ jobs:
           git fetch origin main
           git reset --hard origin/main  # Ensure a clean state
 
-          # Check if news.md exists before committing
+          # Ensure news.md exists
           if [ ! -f news.md ]; then
             echo "❌ ERROR: news.md file not found, skipping commit."
             exit 1
           fi
 
-          # Check if news.md has changes
+          # Check if news.md has changed
           if git diff --quiet -- news.md; then
             echo "✅ No changes in news.md, skipping commit."
             exit 0
@@ -69,5 +73,5 @@ jobs:
           # Pull latest changes and handle merge conflicts
           git pull --rebase origin main || (echo "⚠️ Merge conflict detected, aborting rebase" && git rebase --abort)
 
-          # Push changes
-          git push origin main || echo "⚠️ Push failed. Check permissions or conflicts."
+          # Push changes safely
+          git push origin main --force-with-lease || echo "⚠️ Push failed. Check permissions or conflicts."
