@@ -13,12 +13,20 @@ md_content = "# 📰 Latest News Updates\n\n"
 # Loop through each feed
 for feed_url in RSS_FEEDS:
     feed = feedparser.parse(feed_url)
-    md_content += f"## Source: {feed.feed.title}\n\n"
+    
+    # Check if the feed has a title
+    feed_title = feed.feed.get('title', 'No title available')
+    md_content += f"## Source: {feed_title}\n\n"
 
     for entry in feed.entries[:5]:  # Fetch top 5 articles per feed
-        md_content += f"### [{entry.title}]({entry.link})\n\n"
-        md_content += f"📅 {entry.published}\n\n"
-        md_content += f"{entry.summary}\n\n"
+        entry_title = getattr(entry, 'title', 'No title')
+        entry_link = getattr(entry, 'link', '#')
+        entry_published = getattr(entry, 'published', 'No date available')
+        entry_summary = getattr(entry, 'summary', 'No summary available')
+
+        md_content += f"### [{entry_title}]({entry_link})\n\n"
+        md_content += f"📅 {entry_published}\n\n"
+        md_content += f"{entry_summary}\n\n"
         md_content += "---\n\n"
 
 # Save Markdown file
