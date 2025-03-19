@@ -15,7 +15,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false  # Prevents token issues
 
       - name: Set Up Python
         uses: actions/setup-python@v3
@@ -32,12 +32,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git config --global user.name "GitHub Actions"
+          git config --global user.name "GitHub Bot"
           git config --global user.email "actions@github.com"
-      
-          git pull --rebase origin main  # Pull latest changes before pushing
-      
+
+          git pull --rebase origin main  # Fetch latest changes before pushing
+
           git add news.md
           git commit -m "📰 Auto-update news feed" || echo "No changes to commit"
-          
+
           git push https://github.com/vimalganth/news-feed.git HEAD:main
