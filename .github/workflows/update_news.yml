@@ -29,6 +29,13 @@ jobs:
       - name: Run RSS Fetch Script
         run: python fetch_news.py
 
+      - name: Debug - Check if news.md exists
+        run: |
+          if [ ! -f news.md ]; then
+            echo "⚠️ news.md file is missing! The script may have failed."
+            exit 1
+          fi
+
       - name: Commit & Push Updates
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -43,7 +50,13 @@ jobs:
           git fetch origin main
           git reset --hard origin/main  # Ensure a clean state
 
-          # Check if news.md has changed
+          # Check if news.md exists before committing
+          if [ ! -f news.md ]; then
+            echo "❌ ERROR: news.md file not found, skipping commit."
+            exit 1
+          fi
+
+          # Check if news.md has changes
           if git diff --quiet -- news.md; then
             echo "✅ No changes in news.md, skipping commit."
             exit 0
@@ -53,8 +66,8 @@ jobs:
           git add news.md
           git commit -m "📰 Auto-update news feed"
 
-          # Pull the latest changes and rebase before pushing
-          git pull --rebase origin main || (echo "⚠️ Merge conflict, aborting rebase" && git rebase --abort)
+          # Pull latest changes and handle merge conflicts
+          git pull --rebase origin main || (echo "⚠️ Merge conflict detected, aborting rebase" && git rebase --abort)
 
           # Push changes
-          git push origin main
+          git push origin main || echo "⚠️ Push failed. Check permissions or conflicts."
