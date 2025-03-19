@@ -38,10 +38,12 @@ jobs:
 
           # Ensure we have the latest remote changes
           git fetch origin main
-          git reset --soft origin/main  # Reset local branch to match remote
+          
+          # Auto-merge latest changes without conflicts
+          git pull --rebase origin main || git rebase --abort
 
           git add news.md
           git commit -m "📰 Auto-update news feed" || echo "No changes to commit"
 
           # Push changes safely
-          git push origin main
+          git push origin main --force
